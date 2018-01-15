@@ -6,7 +6,7 @@ type Response interface {
 	ServeWechat()
 }
 
-type BaseResponse struct {
+type baseResponse struct {
 	XMLName      xml.Name `xml:"xml"`
 	ToUserName   string
 	FromUserName string
@@ -14,34 +14,46 @@ type BaseResponse struct {
 	MsgType      string
 }
 
-func (*BaseResponse) ServeWechat() {
-
-}
-
 type TextResponse struct {
-	BaseResponse
+	baseResponse
 	Content string
 }
 
+func (*TextResponse) ServeWechat() {
+
+}
+
 type ImageResponse struct {
-	BaseResponse
+	baseResponse
 	MediaId string
+}
+
+func (*ImageResponse) ServeWechat() {
+
 }
 
 type VoiceResponse struct {
-	BaseResponse
+	baseResponse
 	MediaId string
 }
 
+func (*VoiceResponse) ServeWechat() {
+
+}
+
 type VideoResponse struct {
-	BaseResponse
+	baseResponse
 	MediaId     string
 	Title       string `xml:"omitempty"`
 	Description string `xml:"omitempty"`
 }
 
+func (*VideoResponse) ServeWechat() {
+
+}
+
 type MusicResponse struct {
-	BaseResponse
+	baseResponse
 	Title        string `xml:"omitempty"`
 	Description  string `xml:"omitempty"`
 	MusicURL     string `xml:"omitempty"`
@@ -49,10 +61,18 @@ type MusicResponse struct {
 	ThumbMediaId string
 }
 
+func (*MusicResponse) ServeWechat() {
+
+}
+
 type NewsResponse struct {
-	BaseResponse
+	baseResponse
 	ArticleCount int
 	Articles     []Article
+}
+
+func (*NewsResponse) ServeWechat() {
+
 }
 
 type Article struct {
