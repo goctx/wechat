@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type HandleFunc func(request *io.Request) *io.Response
+type HandleFunc func(request *io.Request) interface{}
 
 type Config struct {
 	Token          string
