@@ -17,16 +17,24 @@ type TextResponse struct {
 
 type ImageResponse struct {
 	baseResponse
+	Image Media
+}
+
+type Media struct {
 	MediaId string
 }
 
 type VoiceResponse struct {
 	baseResponse
-	MediaId string
+	Voice Media
 }
 
 type VideoResponse struct {
 	baseResponse
+	Video Video
+}
+
+type Video struct {
 	MediaId     string
 	Title       string `xml:"omitempty"`
 	Description string `xml:"omitempty"`
@@ -34,6 +42,10 @@ type VideoResponse struct {
 
 type MusicResponse struct {
 	baseResponse
+	Music Music
+}
+
+type Music struct {
 	Title        string `xml:"omitempty"`
 	Description  string `xml:"omitempty"`
 	MusicURL     string `xml:"omitempty"`
