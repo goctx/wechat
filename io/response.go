@@ -70,3 +70,11 @@ type Article struct {
 	PicUrl      string
 	Url         string
 }
+
+type CustomerServiceResponse struct {
+	TransInfo TransInfo
+}
+
+type TransInfo struct {
+	KfAccount string
+}
