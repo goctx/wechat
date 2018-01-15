@@ -4,10 +4,11 @@ import (
 	"crypto/sha1"
 	"encoding/xml"
 	"fmt"
-	"github.com/xialeistudio/wechatmp/io"
+	"github.com/goctx/http-wechat/io"
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 )
 
 type HandleFunc func(request *io.Request) *io.Response
@@ -19,21 +20,21 @@ type Config struct {
 }
 
 type Wechat struct {
-	Token          string
-	AppId          string
-	EncodingAESKey string
+	token          string
+	appid          string
+	encodingAESKey string
 }
 
 func NewWechat(config *Config) *Wechat {
 	return &Wechat{
-		Token:          config.Token,
-		AppId:          config.AppId,
-		EncodingAESKey: config.EncodingAESKey,
+		token:          config.Token,
+		appid:          config.AppId,
+		encodingAESKey: config.EncodingAESKey,
 	}
 }
 
 func (w *Wechat) MakeSign(nonce, timestamp string) string {
-	sl := []string{w.Token, nonce, timestamp}
+	sl := []string{w.token, nonce, timestamp}
 	sort.Strings(sl)
 	s := sha1.New()
 	s.Write([]byte(strings.Join(sl, "")))
@@ -63,6 +64,30 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			panic(err)
 		}
 		response := handleFunc(&req)
+		response.FromUserName = req.ToUserName
+		response.ToUserName = req.FromUserName
+		response.CreateTime = time.Now().Unix()
+		switch v := response.(type) {
+		case *io.TextResponse:
+			v.MsgType = "text"
+			break
+		case *io.ImageResponse:
+			v.MsgType = "image"
+			break
+		case *io.VoiceResponse:
+			v.MsgType = "voice"
+			break
+		case *io.VideoResponse:
+			v.MsgType = "video"
+			break
+		case *io.MusicResponse:
+			v.MsgType = "music"
+			break
+		case *io.NewsResponse:
+			v.MsgType = "news"
+			v.ArticleCount = len(v.Articles)
+			break
+		}
 		encoder := xml.NewEncoder(rw)
 		if err := encoder.Encode(&response); err != nil {
 			panic(err)

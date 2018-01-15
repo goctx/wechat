@@ -43,7 +43,7 @@ type MusicResponse struct {
 
 type NewsResponse struct {
 	Response
-	ArticleCount int8
+	ArticleCount int
 	Articles     []Article
 }
 
