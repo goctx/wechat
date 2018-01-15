@@ -115,6 +115,8 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
 			break
+		case string:
+			fmt.Fprint(rw, v)
 		default:
 			fmt.Fprint(rw, "success")
 			break
