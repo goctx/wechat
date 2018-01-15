@@ -72,6 +72,7 @@ type Article struct {
 }
 
 type CustomerServiceResponse struct {
+	baseResponse
 	TransInfo TransInfo
 }
 

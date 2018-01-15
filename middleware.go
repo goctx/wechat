@@ -73,7 +73,6 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
 		case *io.ImageResponse:
 			v.MsgType = "image"
 			v.FromUserName = req.ToUserName
@@ -81,7 +80,6 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
 		case *io.VoiceResponse:
 			v.MsgType = "voice"
 			v.FromUserName = req.ToUserName
@@ -89,7 +87,6 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
 		case *io.VideoResponse:
 			v.MsgType = "video"
 			v.FromUserName = req.ToUserName
@@ -97,7 +94,6 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
 		case *io.MusicResponse:
 			v.MsgType = "music"
 			v.FromUserName = req.ToUserName
@@ -105,7 +101,6 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
 		case *io.NewsResponse:
 			v.MsgType = "news"
 			v.ArticleCount = len(v.Articles.Articles)
@@ -114,12 +109,17 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			v.CreateTime = time.Now().Unix()
 			encoder := xml.NewEncoder(rw)
 			encoder.Encode(&v)
-			break
+		case *io.CustomerServiceResponse:
+			v.MsgType = "transfer_customer_service"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 		case string:
 			fmt.Fprint(rw, v)
 		default:
 			fmt.Fprint(rw, "success")
-			break
 		}
 	}
 }
