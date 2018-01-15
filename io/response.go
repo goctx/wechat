@@ -56,7 +56,11 @@ type Music struct {
 type NewsResponse struct {
 	baseResponse
 	ArticleCount int
-	Articles     []Article
+	Articles     Articles
+}
+
+type Articles struct {
+	Articles []Article
 }
 
 type Article struct {
