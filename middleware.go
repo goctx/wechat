@@ -63,34 +63,61 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 		if err := decoder.Decode(&req); err != nil {
 			panic(err)
 		}
+
 		response := handleFunc(&req)
-		response.FromUserName = req.ToUserName
-		response.ToUserName = req.FromUserName
-		response.CreateTime = time.Now().Unix()
 		switch v := response.(type) {
 		case *io.TextResponse:
 			v.MsgType = "text"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
 		case *io.ImageResponse:
 			v.MsgType = "image"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
 		case *io.VoiceResponse:
 			v.MsgType = "voice"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
 		case *io.VideoResponse:
 			v.MsgType = "video"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
 		case *io.MusicResponse:
 			v.MsgType = "music"
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
 		case *io.NewsResponse:
 			v.MsgType = "news"
 			v.ArticleCount = len(v.Articles)
+			v.FromUserName = req.ToUserName
+			v.ToUserName = req.FromUserName
+			v.CreateTime = time.Now().Unix()
+			encoder := xml.NewEncoder(rw)
+			encoder.Encode(&v)
 			break
-		}
-		encoder := xml.NewEncoder(rw)
-		if err := encoder.Encode(&response); err != nil {
-			panic(err)
+		default:
+			fmt.Fprint(rw, "success")
+			break
 		}
 	}
 }

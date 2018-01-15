@@ -2,7 +2,11 @@ package io
 
 import "encoding/xml"
 
-type Response struct {
+type Response interface {
+	ServeWechat()
+}
+
+type BaseResponse struct {
 	XMLName      xml.Name `xml:"xml"`
 	ToUserName   string
 	FromUserName string
@@ -10,30 +14,34 @@ type Response struct {
 	MsgType      string
 }
 
+func (*BaseResponse) ServeWechat() {
+
+}
+
 type TextResponse struct {
-	Response
+	BaseResponse
 	Content string
 }
 
 type ImageResponse struct {
-	Response
+	BaseResponse
 	MediaId string
 }
 
 type VoiceResponse struct {
-	Response
+	BaseResponse
 	MediaId string
 }
 
 type VideoResponse struct {
-	Response
+	BaseResponse
 	MediaId     string
 	Title       string `xml:"omitempty"`
 	Description string `xml:"omitempty"`
 }
 
 type MusicResponse struct {
-	Response
+	BaseResponse
 	Title        string `xml:"omitempty"`
 	Description  string `xml:"omitempty"`
 	MusicURL     string `xml:"omitempty"`
@@ -42,7 +50,7 @@ type MusicResponse struct {
 }
 
 type NewsResponse struct {
-	Response
+	BaseResponse
 	ArticleCount int
 	Articles     []Article
 }
