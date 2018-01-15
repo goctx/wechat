@@ -108,7 +108,7 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			break
 		case *io.NewsResponse:
 			v.MsgType = "news"
-			v.ArticleCount = len(v.Articles)
+			v.ArticleCount = len(v.Articles.Articles)
 			v.FromUserName = req.ToUserName
 			v.ToUserName = req.FromUserName
 			v.CreateTime = time.Now().Unix()
