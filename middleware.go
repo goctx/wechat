@@ -47,8 +47,7 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 		timestamp := r.URL.Query().Get("timestamp")
 		signatureGet := r.URL.Query().Get("signature")
 		if w.MakeSign(nonce, timestamp) != signatureGet {
-			rw.WriteHeader(401)
-			fmt.Fprint(rw, "Invalid Signature")
+			http.Error(rw, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
 		}
 		if r.Method == "GET" {
@@ -61,7 +60,8 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 		var req io.Request
 		decoder := xml.NewDecoder(r.Body)
 		if err := decoder.Decode(&req); err != nil {
-			panic(err)
+			http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 
 		response := handleFunc(&req)
