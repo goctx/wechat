@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/goctx/http-wechat/io"
+	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -17,12 +18,14 @@ type Config struct {
 	Token          string
 	AppId          string
 	EncodingAESKey string
+	EnabledLog     bool
 }
 
 type Wechat struct {
 	token          string
 	appid          string
 	encodingAESKey string
+	enableLog      bool
 }
 
 func NewWechat(config *Config) *Wechat {
@@ -30,6 +33,7 @@ func NewWechat(config *Config) *Wechat {
 		token:          config.Token,
 		appid:          config.AppId,
 		encodingAESKey: config.EncodingAESKey,
+		enableLog:      config.EnabledLog,
 	}
 }
 
@@ -43,6 +47,9 @@ func (w *Wechat) MakeSign(nonce, timestamp string) string {
 
 func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *http.Request) {
 	return func(rw http.ResponseWriter, r *http.Request) {
+		if w.enableLog {
+			log.Printf("%s %s\n", r.Method, r.URL.String())
+		}
 		nonce := r.URL.Query().Get("nonce")
 		timestamp := r.URL.Query().Get("timestamp")
 		signatureGet := r.URL.Query().Get("signature")
