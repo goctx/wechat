@@ -62,71 +62,74 @@ func (w *Wechat) Middleware(handleFunc HandleFunc) func(http.ResponseWriter, *ht
 			fmt.Fprint(rw, echoStr)
 			return
 		}
-		// POST处理
-		rw.Header().Set("Content-Type", "text/xml;charset=UTF-8")
-		var req io.Request
-		decoder := xml.NewDecoder(r.Body)
-		if err := decoder.Decode(&req); err != nil {
-			http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
+		if r.Method == "POST" {
+			// POST处理
+			rw.Header().Set("Content-Type", "text/xml;charset=UTF-8")
+			var req io.Request
+			decoder := xml.NewDecoder(r.Body)
+			r.Body.Close()
+			if err := decoder.Decode(&req); err != nil {
+				http.Error(rw, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
 
-		response := handleFunc(&req)
-		switch v := response.(type) {
-		case *io.TextResponse:
-			v.MsgType = "text"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.ImageResponse:
-			v.MsgType = "image"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.VoiceResponse:
-			v.MsgType = "voice"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.VideoResponse:
-			v.MsgType = "video"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.MusicResponse:
-			v.MsgType = "music"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.NewsResponse:
-			v.MsgType = "news"
-			v.ArticleCount = len(v.Articles.Articles)
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case *io.CustomerServiceResponse:
-			v.MsgType = "transfer_customer_service"
-			v.FromUserName = req.ToUserName
-			v.ToUserName = req.FromUserName
-			v.CreateTime = time.Now().Unix()
-			encoder := xml.NewEncoder(rw)
-			encoder.Encode(&v)
-		case string:
-			fmt.Fprint(rw, v)
-		default:
-			fmt.Fprint(rw, "success")
+			response := handleFunc(&req)
+			switch v := response.(type) {
+			case *io.TextResponse:
+				v.MsgType = "text"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.ImageResponse:
+				v.MsgType = "image"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.VoiceResponse:
+				v.MsgType = "voice"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.VideoResponse:
+				v.MsgType = "video"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.MusicResponse:
+				v.MsgType = "music"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.NewsResponse:
+				v.MsgType = "news"
+				v.ArticleCount = len(v.Articles.Articles)
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case *io.CustomerServiceResponse:
+				v.MsgType = "transfer_customer_service"
+				v.FromUserName = req.ToUserName
+				v.ToUserName = req.FromUserName
+				v.CreateTime = time.Now().Unix()
+				encoder := xml.NewEncoder(rw)
+				encoder.Encode(&v)
+			case string:
+				fmt.Fprint(rw, v)
+			default:
+				fmt.Fprint(rw, "success")
+			}
 		}
 	}
 }
